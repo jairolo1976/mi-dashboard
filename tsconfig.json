@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+      // Versión de JS de salida
+      "target": "es2021",
+      // Módulos modernos para Vite
+      "module": "esnext",
+      // Soporte JSX automático de React 17+
+      "jsx": "react-jsx",
+      // Resolución al estilo Node
+      "moduleResolution": "node",
+      // Base para imports absolutos dentro de src
+      "baseUrl": "./src",
+      "paths": { "@/*": ["*"] },
+      // Activar chequeos estrictos
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      // Permitir .js/.jsx en el proyecto
+      "allowJs": true,
+      "checkJs": false
+    },
+    // Procesar todos los archivos dentro de src
+    "include": ["src"]
+  }
+  

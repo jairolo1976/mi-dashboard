@@ -1,0 +1,52 @@
+{
+  "alumnos": [
+    {
+      "id": "e245",
+      "nombre": "Pedro Rey",
+      "edad": 14,
+      "categoria": "Benjamín",
+      "telefono": "637890987",
+      "email": "anis@hotmail.com"
+    },
+    {
+      "id": "a76d",
+      "nombre": "Caramelo Rye",
+      "edad": 14,
+      "categoria": "Benjamín",
+      "telefono": "637890987",
+      "email": "anis@hotmail.com"
+    },
+    {
+      "id": "b7ce",
+      "nombre": "Alfonso Tejar",
+      "edad": 13,
+      "categoria": "Alevín",
+      "telefono": "67589672",
+      "email": "tehulio@gmail.com"
+    },
+    {
+      "id": "d909",
+      "nombre": "Guliber Nemo",
+      "edad": 14,
+      "categoria": "Benjamín",
+      "telefono": "67589678",
+      "email": "tarador@gmail.com"
+    }
+  ],
+  "messages": [
+    {
+      "id": 1,
+      "sender": "María López",
+      "subject": "Bienvenida al curso",
+      "body": "¡Hola! Te damos la bienvenida al nuevo curso. Estamos muy contentos de tenerte con nosotros.",
+      "date": "2025-05-16T08:30:00Z"
+    },
+    {
+      "id": 2,
+      "sender": "Departamento de Administración",
+      "subject": "Recordatorio de pago",
+      "body": "Este es un recordatorio amistoso de que tu cuota de inscripción vence el próximo miércoles.",
+      "date": "2025-05-15T14:45:00Z"
+    }
+  ]
+}
