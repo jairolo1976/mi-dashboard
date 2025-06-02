@@ -1,8 +1,10 @@
 // src/pages/Messages.jsx
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import MensajesAuto from '../components/MensajesAuto';
 
 /**
  * Página de Mensajes
+<<<<<<< Updated upstream
  * Muestra un listado de mensajes obtenidos desde la API.
  */
 export default function Messages() {
@@ -79,6 +81,15 @@ export default function Messages() {
           </li>
         ))}
       </ul>
+=======
+ * Muestra el timeline con filtros, modal y reenvío.
+ */
+export default function Messages() {
+  return (
+    <div className="max-w-3xl mx-auto p-6 space-y-4">
+      <h1 className="text-2xl font-bold">Mensajes</h1>
+      <MensajesAuto />
+>>>>>>> Stashed changes
     </div>
   );
 }

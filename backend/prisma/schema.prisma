@@ -1,0 +1,154 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Alumno {
+  id                Int      @id @default(autoincrement())
+  nombre            String
+  apellido          String?
+  edad              Int
+  fechaNacimiento   DateTime?
+  categoria         String
+  telefono          String?
+  email             String?
+  direccion         String?
+  colegio           String?
+  tallaCamiseta     String?
+  tallaPantalon     String?
+  
+  // Información médica
+  grupoSanguineo    String?
+  alergias          String?
+  enfermedades      String?
+  medicamentos      String?
+  seguroMedico      String?
+  numeroSeguro      String?
+  
+  // Información del tutor principal
+  nombreTutor       String?
+  apellidoTutor     String?
+  telefonoTutor     String?
+  emailTutor        String?
+  relacionTutor     String?
+  
+  // Información del segundo tutor
+  nombreTutor2      String?
+  apellidoTutor2    String?
+  telefonoTutor2    String?
+  emailTutor2       String?
+  relacionTutor2    String?
+  
+  // Otros
+  observaciones     String?
+  activo            Boolean  @default(true)
+  foto              String?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Staff {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  apellido  String
+  cargo     String
+  email     String   @unique
+  password  String
+  telefono  String?
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Evento {
+  id          Int      @id @default(autoincrement())
+  titulo      String
+  descripcion String?
+  fecha       DateTime
+  tipo        String
+  lugar       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Mensaje {
+  id        Int      @id @default(autoincrement())
+  sender    String
+  subject   String
+  body      String
+  date      DateTime
+  leido     Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Casillero {
+  id          Int      @id @default(autoincrement())
+  numero      String   @unique
+  ocupado     Boolean  @default(false)
+  alumnoId    Int?
+  descripcion String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Alerta {
+  id          Int      @id @default(autoincrement())
+  titulo      String
+  descripcion String?
+  tipo        String
+  activo      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Notificacion {
+  id        Int      @id @default(autoincrement())
+  titulo    String
+  mensaje   String
+  leida     Boolean  @default(false)
+  userId    Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Equipo {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  descripcion String?
+  categoria   String
+  estado      String   @default("disponible")
+  cantidad    Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      String   @default("user")
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Documento {
+  id          Int      @id @default(autoincrement())
+  titulo      String
+  descripcion String?
+  archivo     String
+  tipo        String
+  alumnoId    Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 function Dashboard() {
     return (
       <div className="p-6">
@@ -26,3 +27,52 @@ function Dashboard() {
   
   export default Dashboard;
   
+=======
+import { useState, useEffect } from 'react';
+import {
+  getAlumnos,
+  getCasilleros,
+  getEventos,
+  getMensajes,
+  getStaff
+} from '../services/endpoints';
+
+export default function Dashboard() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    console.log('🟡  Dashboard → comienza carga');
+    const load = async () => {
+      try {
+        const [al, ca, ev, me, st] = await Promise.all([
+          getAlumnos(),
+          getCasilleros(),
+          getEventos(),
+          getMensajes(),
+          getStaff()
+        ]);
+        // setters...
+        console.log('✅ Datos cargados:', { al, ca, ev, me, st });
+      } catch (e) {
+        setError('Error al cargar datos');
+        console.error('🔴  Dashboard error', e);
+      } finally {
+        setLoading(false);
+        console.log('✅  Dashboard → termina carga');
+      }
+    };
+    load();
+  }, []);
+  
+  if (loading) return <p className="p-6">Cargando dashboard…</p>;
+  if (error) return <p className="p-6 text-red-600">{error}</p>;
+  
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Dashboard</h1>
+      <p>Contenido del dashboard aquí...</p>
+    </div>
+  );
+}
+>>>>>>> Stashed changes

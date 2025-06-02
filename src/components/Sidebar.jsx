@@ -1,42 +1,57 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  HomeIcon,
-  MessageCircleIcon,
-  GraduationCapIcon,
-  CalendarIcon,
-  ArchiveIcon,
-  SettingsIcon,
+  Home,
+  MessageSquare,
+  GraduationCap,
+  Calendar,
+  Archive,
+  Settings
 } from 'lucide-react';
 
-const Sidebar = () => {
+export default function Sidebar() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const menu = [
-    { nombre: 'Inicio', icono: <HomeIcon />, ruta: '/' },
-    { nombre: 'Mensajes', icono: <MessageCircleIcon />, ruta: '/mensajes' },
-    { nombre: 'Alumnos', icono: <GraduationCapIcon />, ruta: '/alumnos' },
-    { nombre: 'Agenda', icono: <CalendarIcon />, ruta: '/agenda' },
-    { nombre: 'Casilleros', icono: <ArchiveIcon />, ruta: '/casilleros' },
-    { nombre: 'Configuración', icono: <SettingsIcon />, ruta: '/configuracion' },
+    { nombre: 'Inicio', icono: Home, ruta: '/' },
+    { nombre: 'Mensajes', icono: MessageSquare, ruta: '/mensajes' },
+    { nombre: 'Alumnos', icono: GraduationCap, ruta: '/alumnos' },
+    { nombre: 'Agenda', icono: Calendar, ruta: '/agenda' },
+    { nombre: 'Casilleros', icono: Archive, ruta: '/casilleros' },
+    { nombre: 'Configuración', icono: Settings, ruta: '/configuracion' }
   ];
 
   return (
-    <aside className="bg-[#1E2A38] text-white w-60 p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">CALYSM</h1>
-      <nav className="space-y-4">
-        {menu.map((item) => (
-          <button
-            key={item.nombre}
-            onClick={() => navigate(item.ruta)}
-            className="flex items-center w-full gap-3 px-4 py-2 rounded-xl hover:bg-[#2e3c4e] transition"
-          >
-            <span>{item.icono}</span>
-            <span>{item.nombre}</span>
-          </button>
-        ))}
+    <aside className="w-64 bg-gray-900 text-white flex flex-col p-6 shadow-xl">
+      <div className="text-3xl font-extrabold text-blue-400 mb-10 tracking-wider">
+        CALYSM
+      </div>
+      <nav className="flex-1">
+        <ul>
+          {menu.map(item => {
+            const Icon = item.icono;
+            const active = location.pathname === item.ruta;
+            return (
+              <li key={item.ruta} className="mb-4">
+                <button
+                  onClick={() => navigate(item.ruta)}
+                  className={`flex items-center w-full px-4 py-3 rounded-lg text-lg font-medium transition-all duration-200 ${
+                    active
+                      ? 'bg-blue-700 text-white shadow-lg'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  }`}
+                >
+                  <Icon className="w-5 h-5 mr-3" />
+                  {item.nombre}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
       </nav>
+      <div className="mt-auto text-center text-gray-400 text-sm">
+        <p>&copy; 2024 CALYSM. Todos los derechos reservados.</p>
+      </div>
     </aside>
   );
-};
-
-export default Sidebar;
+}

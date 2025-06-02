@@ -1,6 +1,6 @@
 // src/routes.js
-import React from 'react'
-import { Navigate } from 'react-router-dom'
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 import {
   HomeIcon,
   MessageCircleIcon,
@@ -8,16 +8,17 @@ import {
   CalendarIcon,
   ArchiveIcon,
   SettingsIcon,
-} from 'lucide-react'
+} from 'lucide-react';
 
-// importa tus páginas
-import Inicio from './pages/Inicio'
-import Alumnos from './pages/Alumnos'
-import Mensajes from './pages/Messages'      // o renómbralo a Mensajes.jsx si quieres
-import Agenda   from './pages/Agenda'
-import Casilleros from './pages/Casilleros'
-import Configuracion from './pages/Configuracion'
+/* --- páginas --- */
+import Inicio        from './pages/Inicio';
+import Alumnos       from './pages/Alumnos';
+import Messages      from './pages/Messages';
+import Agenda        from './pages/Agenda';
+import Casilleros    from './pages/Casilleros';
+import Configuracion from './pages/Configuracion';
 
+/* --- rutas --- */
 export const routes = [
   {
     path: '/',
@@ -39,8 +40,8 @@ export const routes = [
     sidebar: true,
   },
   {
-    path: '/mensajes',
-    element: <Mensajes />,
+    path: '/messages',
+    element: <Messages />,
     label: 'Mensajes',
     icon: <MessageCircleIcon />,
     sidebar: true,
@@ -66,4 +67,4 @@ export const routes = [
     icon: <SettingsIcon />,
     sidebar: true,
   },
-]
+];

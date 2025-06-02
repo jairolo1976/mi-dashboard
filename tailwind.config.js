@@ -1,11 +1,9 @@
-// tailwind.config.js
+/* eslint-env node */
 module.exports = {
   content: [
-    "./index.html",
-    "./src/**/*.{js,jsx,ts,tsx}"
+    './index.html',
+    './src/**/*.{js,jsx,ts,tsx}',
   ],
-  theme: {
-    extend: {},
-  },
+  theme: { extend: {} },
   plugins: [],
 };
