@@ -1,253 +1,205 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import {
-  Users, Calendar, Archive, MessageSquare, Bell,
-  UsersRound, Package, FileText, TrendingUp
-} from 'lucide-react';
-import {
-  getAlumnos, getCasilleros, getEventos,
-  getMensajes, getStaff, getAlertas
-} from '../services/endpoints';
+import React, { useState, useEffect } from 'react';
+import { Users, Calendar, AlertTriangle, Archive } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import apiClient from '../services/apiClient';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [alumnos, setAlumnos] = useState([]);
-  const [casilleros, setCasilleros] = useState([]);
-  const [eventos, setEventos] = useState([]);
-  const [mensajes, setMensajes] = useState([]);
-  const [staff, setStaff] = useState([]);
-  const [alertasDB, setAlertasDB] = useState([]);
+  const [estadisticas, setEstadisticas] = useState({
+    total: 0,
+    porCategoria: {
+      'Benjamín': 0,
+      'Alevín': 0,
+      'Infantil': 0,
+      'Cadete': 0,
+      'Juvenil': 0,
+      'Senior': 0
+    }
+  });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    Promise.all([
-      getAlumnos().catch(() => []),
-      getCasilleros().catch(() => []),
-      getEventos().catch(() => []),
-      getMensajes().catch(() => []),
-      getStaff().catch(() => []),
-      getAlertas().catch(() => [])
-    ])
-      .then(([a, c, e, m, s, al]) => {
-        setAlumnos(a || []);
-        setCasilleros(c || []);
-        setEventos(e || []);
-        setMensajes(m || []);
-        setStaff(s || []);
-        setAlertasDB(al || []);
-      })
-      .catch(err => {
-        setError('Error al cargar los datos del dashboard.');
-        console.error(err);
-      })
-      .finally(() => setLoading(false));
+    const fetchEstadisticas = async () => {
+      try {
+        console.log('🔄 Cargando estadísticas...');
+        const response = await apiClient.get('/alumnos/estadisticas');
+        console.log('✅ Estadísticas recibidas:', response.data);
+        setEstadisticas(response.data);
+      } catch (error) {
+        console.error('❌ Error al cargar estadísticas:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEstadisticas();
   }, []);
 
-  if (loading) return <div className="p-8 text-center text-xl text-gray-600">Cargando dashboard...</div>;
-  if (error) return <div className="p-8 text-center text-xl text-red-600">{error}</div>;
+  const categorias = ['Benjamín', 'Alevín', 'Infantil', 'Cadete', 'Juvenil', 'Senior'];
+  const totalAlumnos = estadisticas.total || 0;
 
-  // Cálculos
-  const alumnosPorCategoria = {
-    'Sub-10': 2,
-    'Sub-12': 1,
-    'Infantil': 1,
-    'Cadete': 0,
-    'Juvenil': 0,
-    'Senior': 0
-  };
-  
-  const totalCasilleros = 20;
-  const casillerosOcupados = 12;
-  const casillerosDisponibles = totalCasilleros - casillerosOcupados;
-  const mensajesNoLeidos = mensajes.filter(m => !m.leido).length || 3;
-  
-  const proximosEventos = [
-    { id: 1, fecha: '25/5/2025', nombre: 'Partido vs U.D. Las Palmas', equipo: 'Sub-10' },
-    { id: 2, fecha: '28/5/2025', nombre: 'Entrenamiento intensivo', equipo: 'Sub-12' }
+  const cardData = [
+    {
+      icon: Users,
+      title: 'Total Alumnos',
+      value: loading ? '...' : totalAlumnos.toString(),
+      bgColor: 'bg-blue-500',
+      path: '/alumnos'
+    },
+    {
+      icon: Calendar,
+      title: 'Eventos Activos',
+      value: '12',
+      bgColor: 'bg-green-500',
+      path: '/agenda'
+    },
+    {
+      icon: AlertTriangle,
+      title: 'Alertas',
+      value: '4',
+      bgColor: 'bg-yellow-500',
+      path: '/alertas'
+    },
+    {
+      icon: Archive,
+      title: 'Casilleros',
+      value: '45',
+      bgColor: 'bg-purple-500',
+      path: '/casilleros'
+    }
   ];
 
-  // Función para obtener ícono según tipo
-  const getTipoIcon = (tipo) => {
-    switch(tipo) {
-      case 'warning': return '⚠️';
-      case 'error': return '❌';
-      case 'info': return 'ℹ️';
-      case 'success': return '✅';
-      default: return '📢';
-    }
+  const handleCardClick = (path) => {
+    console.log('🔄 Navegando a:', path);
+    navigate(path);
   };
 
-  // Filtrar solo alertas activas para el dashboard
-  const alertasActivas = alertasDB.filter(alerta => alerta.activo);
-
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">Command Center</h1>
+    <div className="p-8">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Command Center</h1>
+        <p className="text-gray-600">Sistema de Gestión CALYSM</p>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
-        {/* Alumnos por Categoría */}
-        <Card icon={<Users className="text-blue-600" />} title="Alumnos por Categoría">
-          <ul className="space-y-1 mb-4">
-            {Object.entries(alumnosPorCategoria).map(([cat, count]) => (
-              <li key={cat} className="flex justify-between">
-                <span>{cat}:</span>
-                <span className="font-semibold">{count} alumnos</span>
-              </li>
-            ))}
-          </ul>
-          <LinkBtn to="/alumnos" color="blue">Ver Detalles</LinkBtn>
-        </Card>
-
-        {/* Próximos Eventos */}
-        <Card icon={<Calendar className="text-green-600" />} title="Próximos Eventos">
-          <ul className="space-y-2 mb-4">
-            {proximosEventos.map(e => (
-              <li key={e.id} className="text-sm">
-                <div className="font-semibold">{e.fecha}: {e.nombre}</div>
-                <div className="text-gray-600">{e.equipo}</div>
-              </li>
-            ))}
-          </ul>
-          <LinkBtn to="/agenda" color="green">Ir a Agenda</LinkBtn>
-        </Card>
-
-        {/* Casilleros */}
-        <Card icon={<Archive className="text-yellow-600" />} title="Casilleros">
-          <div className="mb-4">
-            <p className="text-2xl font-bold">
-              {casillerosOcupados}/{totalCasilleros}
-              <span className="text-sm font-normal text-gray-600 ml-2">ocupados</span>
-            </p>
-            <div className="w-full bg-gray-200 rounded-full h-3 mt-2">
-              <div 
-                className="bg-yellow-600 h-3 rounded-full"
-                style={{ width: `${(casillerosOcupados/totalCasilleros)*100}%` }}
-              />
+      {/* Tarjetas principales - AHORA CLICKEABLES */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {cardData.map((card, index) => (
+          <div
+            key={index}
+            onClick={() => handleCardClick(card.path)}
+            className="bg-white rounded-lg shadow-lg p-6 cursor-pointer transform transition-all duration-200 hover:scale-105 hover:shadow-xl"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className={`${card.bgColor} p-3 rounded-lg`}>
+                <card.icon className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-3xl font-bold text-gray-800">{card.value}</span>
             </div>
+            <h3 className="text-lg font-semibold">{card.title}</h3>
+            <p className="text-sm text-gray-500 mt-2">Click para ver detalles</p>
           </div>
-          <LinkBtn to="/casilleros" color="yellow">Administrar</LinkBtn>
-        </Card>
+        ))}
+      </div>
 
-        {/* Mensajes Pendientes */}
-        <Card icon={<MessageSquare className="text-purple-600" />} title="Mensajes Pendientes">
-          <div className="mb-4">
-            <p className="text-3xl font-bold">{mensajesNoLeidos}</p>
-            <p className="text-gray-600">no leídos</p>
-            <p className="text-sm text-gray-500 mt-2">Revisa las últimas comunicaciones.</p>
-          </div>
-          <LinkBtn to="/mensajes" color="purple">Ver Mensajes</LinkBtn>
-        </Card>
-
-        {/* Alertas Importantes */}
-        <Card icon={<Bell className="text-red-600" />} title="Alertas Importantes" span>
-          <ul className="space-y-2 mb-4">
-            {alertasActivas.length > 0 ? (
-              alertasActivas.map(alerta => (
-                <li key={alerta.id} className="flex items-start gap-2">
-                  <span>{getTipoIcon(alerta.tipo)}</span>
-                  <div className="flex-1">
-                    <span className={`text-sm font-medium ${
-                      alerta.tipo === 'error' ? 'text-red-700' : 
-                      alerta.tipo === 'warning' ? 'text-orange-700' : 
-                      alerta.tipo === 'success' ? 'text-green-700' :
-                      'text-blue-700'
-                    }`}>
-                      {alerta.titulo}
-                    </span>
-                    {alerta.descripcion && (
-                      <p className="text-xs text-gray-600 mt-1">{alerta.descripcion}</p>
+      {/* Distribución por categorías */}
+      <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 className="text-xl font-bold mb-4">Distribución por Categorías</h2>
+        <div className="space-y-3">
+          {categorias.map((categoria) => {
+            const cantidad = estadisticas.porCategoria[categoria] || 0;
+            const porcentaje = totalAlumnos > 0 ? (cantidad / totalAlumnos) * 100 : 0;
+            
+            return (
+              <div key={categoria} className="flex items-center gap-4">
+                <span className="w-24 text-sm font-medium">{categoria}:</span>
+                <div className="flex-1 bg-gray-200 rounded-full h-6 relative overflow-hidden">
+                  <div
+                    className="bg-blue-500 h-full rounded-full transition-all duration-500 flex items-center justify-end pr-2"
+                    style={{ width: `${porcentaje}%` }}
+                  >
+                    {porcentaje > 10 && (
+                      <span className="text-white text-xs font-semibold">{cantidad}</span>
                     )}
                   </div>
-                </li>
-              ))
-            ) : (
-              <li className="text-sm text-gray-500 text-center py-4">
-                No hay alertas activas
-              </li>
-            )}
-          </ul>
+                </div>
+                <span className="w-16 text-right text-sm font-semibold">{cantidad}</span>
+              </div>
+            );
+          })}
+        </div>
+        <div className="mt-4 pt-4 border-t">
+          <div className="flex justify-between items-center">
+            <span className="font-bold">Total:</span>
+            <span className="text-2xl font-bold text-blue-600">{totalAlumnos} alumnos</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Panel de alertas */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <AlertTriangle className="w-6 h-6 text-yellow-500" />
+            Alertas Recientes
+          </h2>
+          <div className="space-y-3">
+            <div className="p-3 bg-red-50 border-l-4 border-red-500 rounded">
+              <p className="font-semibold text-red-800">Urgente: Revisión médica</p>
+              <p className="text-sm text-red-600">3 alumnos necesitan renovar certificado</p>
+            </div>
+            <div className="p-3 bg-yellow-50 border-l-4 border-yellow-500 rounded">
+              <p className="font-semibold text-yellow-800">Pagos pendientes</p>
+              <p className="text-sm text-yellow-600">5 cuotas por confirmar</p>
+            </div>
+            <div className="p-3 bg-blue-50 border-l-4 border-blue-500 rounded">
+              <p className="font-semibold text-blue-800">Próximo evento</p>
+              <p className="text-sm text-blue-600">Competencia regional - 15 de Junio</p>
+            </div>
+          </div>
           <button 
             onClick={() => navigate('/alertas')}
-            className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition"
+            className="mt-4 w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600 transition-colors"
           >
-            Gestionar Alertas
+            Ver todas las alertas
           </button>
-        </Card>
+        </div>
 
-        {/* Staff Registrado */}
-        <Card icon={<UsersRound className="text-indigo-600" />} title="Staff Registrado">
-          <div className="mb-4">
-            <p className="text-3xl font-bold">{staff.length || 3}</p>
-            <p className="text-gray-600">miembros</p>
-            <p className="text-sm text-gray-500 mt-2">Ver el listado completo del personal.</p>
+        {/* Acciones rápidas */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h2 className="text-xl font-bold mb-4">Acciones Rápidas</h2>
+          <div className="grid grid-cols-2 gap-3">
+            <button 
+              onClick={() => navigate('/alumnos')}
+              className="p-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex flex-col items-center gap-2"
+            >
+              <Users className="w-8 h-8" />
+              <span className="text-sm">Nuevo Alumno</span>
+            </button>
+            <button 
+              onClick={() => navigate('/agenda')}
+              className="p-4 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex flex-col items-center gap-2"
+            >
+              <Calendar className="w-8 h-8" />
+              <span className="text-sm">Crear Evento</span>
+            </button>
+            <button 
+              onClick={() => navigate('/alertas')}
+              className="p-4 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors flex flex-col items-center gap-2"
+            >
+              <AlertTriangle className="w-8 h-8" />
+              <span className="text-sm">Nueva Alerta</span>
+            </button>
+            <button 
+              onClick={() => navigate('/casilleros')}
+              className="p-4 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex flex-col items-center gap-2"
+            >
+              <Archive className="w-8 h-8" />
+              <span className="text-sm">Asignar Casillero</span>
+            </button>
           </div>
-          <LinkBtn to="/staff" color="indigo">Ver Staff</LinkBtn>
-        </Card>
-
-        {/* Equipamiento */}
-        <Card icon={<Package className="text-teal-600" />} title="Equipamiento">
-          <div className="mb-4">
-            <p className="text-3xl font-bold">200+</p>
-            <p className="text-gray-600">ítems</p>
-            <p className="text-sm text-gray-500 mt-2">Gestiona el inventario de material deportivo.</p>
-          </div>
-          <LinkBtn to="/equipamiento" color="teal">Administrar</LinkBtn>
-        </Card>
-
-        {/* Documentos */}
-        <Card icon={<FileText className="text-orange-600" />} title="Documentos">
-          <div className="mb-4">
-            <p className="text-3xl font-bold">15</p>
-            <p className="text-gray-600">archivos</p>
-            <p className="text-sm text-gray-500 mt-2">Fichas médicas, autorizaciones, reglamentos.</p>
-          </div>
-          <LinkBtn to="/documentos" color="orange">Ver Documentos</LinkBtn>
-        </Card>
-
-        {/* Reportes */}
-        <Card icon={<TrendingUp className="text-pink-600" />} title="Reportes">
-          <div className="mb-4">
-            <p className="text-sm text-gray-600">Genera informes detallados de rendimiento y asistencia.</p>
-          </div>
-          <LinkBtn to="/reportes" color="pink">Generar Reporte</LinkBtn>
-        </Card>
+        </div>
       </div>
     </div>
-  );
-}
-
-/* ── Componentes internos ─────────────────────────────────────────────── */
-function Card({ icon, title, children, span }) {
-  return (
-    <div className={`bg-white rounded-xl shadow-md p-6 border border-gray-100 ${span ? 'lg:col-span-2' : ''}`}>
-      <h2 className="text-xl font-semibold flex items-center gap-2 mb-4">
-        {icon} {title}
-      </h2>
-      {children}
-    </div>
-  );
-}
-
-function LinkBtn({ to, color, children }) {
-  const colorClasses = {
-    blue: 'bg-blue-600 hover:bg-blue-700',
-    green: 'bg-green-600 hover:bg-green-700',
-    yellow: 'bg-yellow-600 hover:bg-yellow-700',
-    purple: 'bg-purple-600 hover:bg-purple-700',
-    indigo: 'bg-indigo-600 hover:bg-indigo-700',
-    teal: 'bg-teal-600 hover:bg-teal-700',
-    orange: 'bg-orange-600 hover:bg-orange-700',
-    pink: 'bg-pink-600 hover:bg-pink-700'
-  };
-
-  return (
-    <Link
-      to={to}
-      className={`block text-center px-4 py-2 text-white rounded-lg transition ${colorClasses[color] || colorClasses.blue}`}
-    >
-      {children}
-    </Link>
   );
 }

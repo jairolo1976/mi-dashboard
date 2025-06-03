@@ -51,8 +51,19 @@ model Alumno {
   activo            Boolean  @default(true)
   foto              String?
   
+  // NUEVOS CAMPOS PARA EVALUACIONES
+  numeroCamiseta    Int?
+  posicion          String?  // Portero, Defensa, Medio, Delantero
+  
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  
+  // RELACIONES CON EVALUACIONES
+  resultadosFisicos         ResultadoFisico[]
+  evaluacionesTecnicas      EvaluacionTecnica[]
+  evaluacionesActitudinales EvaluacionActitudinal[]
+  evaluacionesGlobales      EvaluacionGlobal[]
+  configuracionEvaluacion   ConfiguracionEvaluacion?
 }
 
 model Staff {
@@ -60,7 +71,7 @@ model Staff {
   nombre    String
   apellido  String
   cargo     String
-  email     String   @unique
+  email     String
   password  String
   telefono  String?
   activo    Boolean  @default(true)
@@ -92,7 +103,7 @@ model Mensaje {
 
 model Casillero {
   id          Int      @id @default(autoincrement())
-  numero      String   @unique
+  numero      String
   ocupado     Boolean  @default(false)
   alumnoId    Int?
   descripcion String?
@@ -133,8 +144,8 @@ model Equipo {
 
 model User {
   id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
+  username  String
+  email     String
   password  String
   role      String   @default("user")
   activo    Boolean  @default(true)
@@ -151,4 +162,187 @@ model Documento {
   alumnoId    Int?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// ===== NUEVOS MODELOS PARA SISTEMA DE EVALUACIONES =====
+
+// Configuración de periodicidad de evaluaciones por jugador
+model ConfiguracionEvaluacion {
+  id                Int      @id @default(autoincrement())
+  alumnoId          Int      @unique
+  alumno            Alumno   @relation(fields: [alumnoId], references: [id])
+  periodicidadMeses Int      @default(2) // 1, 2 o 3 meses
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// Catálogo de pruebas físicas disponibles
+model PruebaFisica {
+  id                Int      @id @default(autoincrement())
+  codigo            String   @unique // SPRINT_20M, COOPER, SALTO_VERTICAL, etc
+  nombre            String
+  unidad            String   // segundos, metros, cm
+  categoria         String   // velocidad, resistencia, potencia, agilidad
+  descripcion       String?
+  
+  resultados        ResultadoFisico[]
+  normativas        NormativaReferencia[]
+}
+
+// Resultados de las pruebas físicas por alumno
+model ResultadoFisico {
+  id                Int      @id @default(autoincrement())
+  alumnoId          Int
+  alumno            Alumno   @relation(fields: [alumnoId], references: [id])
+  pruebaId          Int
+  prueba            PruebaFisica @relation(fields: [pruebaId], references: [id])
+  valor             Float
+  fecha             DateTime
+  semaforo          String   // verde, amarillo, rojo
+  percentil         Int?
+  observaciones     String?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([alumnoId, fecha])
+}
+
+// Evaluaciones técnicas por partido o entrenamiento
+model EvaluacionTecnica {
+  id                Int      @id @default(autoincrement())
+  alumnoId          Int
+  alumno            Alumno   @relation(fields: [alumnoId], references: [id])
+  fecha             DateTime
+  tipoEvaluacion    String   // partido, entrenamiento
+  
+  // Métricas ofensivas
+  goles             Int      @default(0)
+  asistencias       Int      @default(0)
+  tirosPuerta       Int      @default(0)
+  tirosDesviados    Int      @default(0)
+  
+  // Métricas de pase
+  pasesBuenos       Int      @default(0)
+  pasesTotales      Int      @default(0)
+  porcentajePases   Float?   // Calculado: (pasesBuenos/pasesTotales)*100
+  
+  // Métricas defensivas
+  recuperaciones    Int      @default(0)
+  intercepciones    Int      @default(0)
+  duelosGanados     Int      @default(0)
+  duelosPerdidos    Int      @default(0)
+  
+  // Métricas generales
+  minutosJugados    Int      @default(0)
+  kmRecorridos      Float?
+  toqueBalon        Int?     // Número de toques
+  
+  // Evaluación por semáforos
+  semaforoOfensivo  String?  // Para delanteros/medios ofensivos
+  semaforoDefensivo String?  // Para defensas/medios defensivos
+  semaforoPases     String?  // Para todos
+  semaforoGeneral   String   // Consolidado según posición
+  
+  observaciones     String?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([alumnoId, fecha])
+}
+
+// Evaluaciones actitudinales periódicas
+model EvaluacionActitudinal {
+  id                Int      @id @default(autoincrement())
+  alumnoId          Int
+  alumno            Alumno   @relation(fields: [alumnoId], references: [id])
+  fecha             DateTime
+  periodo           String   // mensual, bimestral, trimestral
+  
+  // Métricas 1-5
+  disciplina        Int      // Comportamiento, respeto reglas
+  concentracion     Int      // Foco en entrenamientos y partidos
+  puntualidad       Int      // Asistencia y llegadas a tiempo
+  trabajoEquipo     Int      // Cooperación, altruismo
+  liderazgo         Int      // Comunicación, ejemplo
+  resiliencia       Int      // Respuesta a adversidad
+  
+  // Datos adicionales
+  tarjetasAmarillas Int      @default(0)
+  tarjetasRojas     Int      @default(0)
+  asistenciaPercent Float?   // % asistencia en el periodo
+  
+  // Semáforos por área
+  semaforoDisciplina     String?
+  semaforoTrabajEquipo   String?
+  semaforoMentalidad     String?
+  semaforoGeneral        String
+  
+  observaciones     String?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([alumnoId, fecha])
+}
+
+// Evaluación global consolidada
+model EvaluacionGlobal {
+  id                    Int      @id @default(autoincrement())
+  alumnoId              Int
+  alumno                Alumno   @relation(fields: [alumnoId], references: [id])
+  fecha                 DateTime
+  periodo               String   // mensual, bimestral, trimestral
+  
+  // Semáforos de las 4 áreas principales
+  semaforoFisico        String   // Consolidado de pruebas físicas
+  semaforoTecnico       String   // Consolidado de estadísticas partido
+  semaforoTactico       String   // Participación, visión de juego
+  semaforoActitudinal   String   // Consolidado actitudinal
+  
+  // Métricas consolidadas
+  notaGeneral           Float?   // 0.0 a 10.0
+  percentilCategoria    Int?     // Posición respecto a su categoría
+  
+  // Interpretaciones
+  fortalezas            String[] // ["Velocidad excepcional", "Liderazgo natural"]
+  areasDesarrollo       String[] // ["Mejorar resistencia", "Control emocional"]
+  recomendaciones       String[] // ["Trabajar ejercicios aeróbicos", "Práctica de pases largos"]
+  
+  // Progreso
+  tendenciaFisica       String?  // mejorando, estable, decayendo
+  tendenciaTecnica      String?
+  tendenciaActitudinal  String?
+  
+  createdAt             DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([alumnoId, fecha])
+}
+
+// Tablas de referencia normativas para interpretación
+model NormativaReferencia {
+  id                Int      @id @default(autoincrement())
+  pruebaId          Int
+  prueba            PruebaFisica @relation(fields: [pruebaId], references: [id])
+  categoria         String   // Benjamín, Alevín, Infantil, etc.
+  sexo              String?  // M, F, null para ambos
+  edadMin           Int?
+  edadMax           Int?
+  
+  // Umbrales para semáforos
+  valorExcelente    Float    // Verde alto
+  valorBueno        Float    // Verde
+  valorPromedio     Float    // Amarillo
+  valorBajo         Float    // Amarillo bajo
+  valorCritico      Float    // Rojo
+  
+  // Indica si menor valor es mejor (true para tiempos)
+  menorEsMejor      Boolean  @default(false)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@unique([pruebaId, categoria, sexo])
 }
