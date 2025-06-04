@@ -1,0 +1,255 @@
+/* Estilos generales para reportes */
+.reporte-container {
+  background-color: #ffffff;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Contenedor A4 para vista previa */
+.reporte-a4 {
+  width: 794px; /* A4 width at 96dpi */
+  min-height: 1123px; /* A4 height at 96dpi */
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+}
+
+/* Header del reporte */
+.reporte-header {
+  border-bottom: 3px solid #3B82F6;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.reporte-titulo {
+  font-size: 28px;
+  font-weight: bold;
+  color: #1F2937;
+  margin-bottom: 8px;
+}
+
+.reporte-subtitulo {
+  font-size: 16px;
+  color: #6B7280;
+}
+
+/* Sección de jugador */
+.jugador-info {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #F9FAFB;
+  border-radius: 12px;
+}
+
+.jugador-foto {
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 3px solid #E5E7EB;
+}
+
+.jugador-datos h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1F2937;
+  margin-bottom: 8px;
+}
+
+.jugador-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background-color: #3B82F6;
+  color: white;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+/* Secciones del reporte */
+.reporte-seccion {
+  margin-bottom: 40px;
+}
+
+.reporte-seccion-titulo {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1F2937;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #E5E7EB;
+}
+
+/* Métricas destacadas */
+.metricas-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.metrica-card {
+  background-color: #F9FAFB;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #E5E7EB;
+}
+
+.metrica-valor {
+  font-size: 32px;
+  font-weight: bold;
+  color: #3B82F6;
+  margin-bottom: 4px;
+}
+
+.metrica-label {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+/* Observaciones */
+.observaciones-box {
+  background-color: #EFF6FF;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #3B82F6;
+  margin-top: 20px;
+}
+
+.observacion-titulo {
+  font-weight: 600;
+  color: #1E40AF;
+  margin-bottom: 8px;
+}
+
+.observacion-texto {
+  color: #374151;
+  line-height: 1.6;
+}
+
+/* Recomendaciones */
+.recomendaciones-lista {
+  list-style: none;
+  padding: 0;
+}
+
+.recomendacion-item {
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  background-color: #FEF3C7;
+  border-radius: 8px;
+  border-left: 4px solid #F59E0B;
+  display: flex;
+  align-items: start;
+  gap: 12px;
+}
+
+.recomendacion-icono {
+  color: #F59E0B;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+/* Estilos para impresión */
+@media print {
+  .reporte-container {
+    margin: 0;
+    box-shadow: none;
+  }
+  
+  .reporte-a4 {
+    width: 100%;
+    margin: 0;
+    padding: 20mm;
+    box-shadow: none;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  /* Evitar cortes de página en elementos importantes */
+  .reporte-seccion,
+  .jugador-info,
+  .metricas-grid {
+    page-break-inside: avoid;
+  }
+  
+  /* Nueva página para secciones grandes */
+  .nueva-pagina {
+    page-break-before: always;
+  }
+}
+
+/* Estilos específicos para modo formal */
+.reporte-formal {
+  font-family: 'Times New Roman', serif;
+}
+
+.reporte-formal .reporte-titulo {
+  font-size: 24px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.reporte-formal .jugador-info {
+  background-color: transparent;
+  border: 1px solid #D1D5DB;
+  border-radius: 0;
+}
+
+.reporte-formal .metrica-card {
+  background-color: transparent;
+  border: 1px solid #D1D5DB;
+}
+
+.reporte-formal .observaciones-box {
+  background-color: #F9FAFB;
+  border-left-color: #6B7280;
+}
+
+/* Estilos para modo visual (padres) */
+.reporte-visual {
+  font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
+}
+
+.reporte-visual .reporte-header {
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  border-bottom: none;
+}
+
+.reporte-visual .reporte-titulo {
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reporte-visual .jugador-badge {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.reporte-visual .metrica-card {
+  background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Animaciones para modo interactivo */
+.reporte-interactivo .metrica-card {
+  transition: transform 0.2s ease;
+}
+
+.reporte-interactivo .metrica-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}

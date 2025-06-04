@@ -101,4 +101,45 @@ export class AlumnosService {
       return {};
     }
   }
+
+  async getEstadisticas() {
+    try {
+      const alumnos = await this.prisma.alumno.findMany({
+        where: { activo: true }
+      });
+
+      const estadisticas = {
+        total: alumnos.length,
+        porCategoria: {
+          'Benjamín': 0,
+          'Alevín': 0,
+          'Infantil': 0,
+          'Cadete': 0,
+          'Juvenil': 0,
+          'Senior': 0
+        }
+      };
+
+      alumnos.forEach(alumno => {
+        if (estadisticas.porCategoria[alumno.categoria] !== undefined) {
+          estadisticas.porCategoria[alumno.categoria]++;
+        }
+      });
+
+      return estadisticas;
+    } catch (error) {
+      console.error('Error obteniendo estadísticas:', error);
+      return {
+        total: 0,
+        porCategoria: {
+          'Benjamín': 0,
+          'Alevín': 0,
+          'Infantil': 0,
+          'Cadete': 0,
+          'Juvenil': 0,
+          'Senior': 0
+        }
+      };
+    }
+  }
 }

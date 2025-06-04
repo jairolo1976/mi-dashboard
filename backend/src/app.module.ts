@@ -6,6 +6,7 @@ import { CasillerosModule } from './casilleros/casilleros.module';
 import { EventosModule } from './eventos/eventos.module';
 import { MensajesModule } from './mensajes/mensajes.module';
 import { AlertasModule } from './alertas/alertas.module';
+import { ReportesModule } from './reportes/reportes.module';
 
 @Module({
  imports: [
@@ -16,6 +17,7 @@ import { AlertasModule } from './alertas/alertas.module';
    EventosModule,
    MensajesModule,
    AlertasModule,
+   ReportesModule,
  ],
 })
 export class AppModule {}
