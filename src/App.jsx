@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import {
   Home, MessageSquare, Users, Calendar, Settings,
-  Archive, UsersRound, Package, TrendingUp, FileText, Bell, AlertTriangle
+  Archive, UsersRound, Package, TrendingUp, FileText, Bell, AlertTriangle, ClipboardCheck
 } from 'lucide-react';
 
 import Dashboard  from './components/Dashboard';
@@ -9,14 +9,18 @@ import StaffList  from './components/StaffList';
 import DashboardInicio from './pages/DashboardInicio';
 import GeneradorReporte from './components/reportes/GeneradorReporte';
 
-/* --- placeholders --- */
+/* --- Pages --- */
 import AlumnosPage from './pages/AlumnosPage';
 import AlertasPage from './pages/AlertasPage';
+import EvaluacionesPage from './pages/EvaluacionesPage';
+import FormularioEvaluacion from './pages/FormularioEvaluacion';
+import ConfiguracionEvaluaciones from './pages/ConfiguracionEvaluaciones';
+
+/* --- placeholders --- */
 const Mensajes = () => <div className="p-6 text-2xl">Mensajes (En desarrollo)</div>;
 const Agenda   = () => <div className="p-6 text-2xl">Agenda (En desarrollo)</div>;
 const Casilleros = () => <div className="p-6 text-2xl">Casilleros (En desarrollo)</div>;
 const Equipamiento = () => <div className="p-6 text-2xl">Equipamiento (En desarrollo)</div>;
-const Reportes = () => <div className="p-6 text-2xl">Reportes (En desarrollo)</div>;
 const Documentos = () => <div className="p-6 text-2xl">Documentos (En desarrollo)</div>;
 const Notificaciones = () => <div className="p-6 text-2xl">Notificaciones (En desarrollo)</div>;
 const Configuracion  = () => <div className="p-6 text-2xl">Configuración (En desarrollo)</div>;
@@ -50,6 +54,7 @@ export default function App(){
               <Item to="/"             icon={Home}         label="Inicio"         />
               <Item to="/mensajes"     icon={MessageSquare} label="Mensajes"      />
               <Item to="/alumnos"      icon={Users}        label="Alumnos"        />
+              <Item to="/evaluaciones" icon={ClipboardCheck} label="Evaluaciones" />
               <Item to="/agenda"       icon={Calendar}     label="Agenda"         />
               <Item to="/casilleros"   icon={Archive}      label="Casilleros"     />
               <Item to="/staff"        icon={UsersRound}   label="Staff"          />
@@ -76,11 +81,14 @@ export default function App(){
             <Route path="/mensajes"     element={<Mensajes />} />
             <Route path="/alumnos" element={<AlumnosPage />} />
             <Route path="/alumnos/:id/reporte" element={<GeneradorReporte />} />
+            <Route path="/evaluaciones" element={<EvaluacionesPage />} />
+            <Route path="/evaluaciones/jugador/:id" element={<FormularioEvaluacion />} />
+            <Route path="/evaluaciones/configuracion" element={<ConfiguracionEvaluaciones />} />
             <Route path="/agenda"       element={<Agenda />} />
             <Route path="/casilleros"   element={<Casilleros />} />
             <Route path="/staff"        element={<StaffList />} />
             <Route path="/equipamiento" element={<Equipamiento />} />
-            <Route path="/reportes"     element={<Reportes />} />
+            <Route path="/reportes"     element={<GeneradorReporte />} />
             <Route path="/documentos"   element={<Documentos />} />
             <Route path="/alertas"      element={<AlertasPage />} />
             <Route path="/notificaciones" element={<Notificaciones />} />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Calendar, AlertTriangle, Archive, FileText } from 'lucide-react';
+import { Users, Calendar, AlertTriangle, Archive, FileText, ClipboardCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../services/apiClient';
 
@@ -38,6 +38,9 @@ export default function Dashboard() {
   const categorias = ['Benjamín', 'Alevín', 'Infantil', 'Cadete', 'Juvenil', 'Senior'];
   const totalAlumnos = estadisticas.total || 0;
 
+  // Calcular evaluaciones pendientes (simulado por ahora)
+  const evaluacionesPendientes = Math.round(totalAlumnos * 0.3);
+
   const cardData = [
     {
       icon: Users,
@@ -45,6 +48,13 @@ export default function Dashboard() {
       value: loading ? '...' : totalAlumnos.toString(),
       bgColor: 'bg-blue-500',
       path: '/alumnos'
+    },
+    {
+      icon: ClipboardCheck,
+      title: 'Evaluaciones Pendientes',
+      value: loading ? '...' : evaluacionesPendientes.toString(),
+      bgColor: 'bg-orange-500',
+      path: '/evaluaciones'
     },
     {
       icon: Calendar,
@@ -95,7 +105,7 @@ export default function Dashboard() {
       </div>
 
       {/* Tarjetas principales - CLICKEABLES */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
         {cardData.map((card, index) => (
           <div
             key={index}
@@ -188,7 +198,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Panel de acciones rápidas - CON REPORTES */}
+      {/* Panel de acciones rápidas - CON REPORTES Y EVALUACIONES */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h2 className="text-xl font-bold mb-4">Acciones Rápidas</h2>
@@ -199,6 +209,20 @@ export default function Dashboard() {
             >
               <Users className="w-8 h-8" />
               <span className="text-sm">Nuevo Alumno</span>
+            </button>
+            <button 
+              onClick={() => navigate('/evaluaciones')}
+              className="p-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors flex flex-col items-center gap-2"
+            >
+              <ClipboardCheck className="w-8 h-8" />
+              <span className="text-sm">Nueva Evaluación</span>
+            </button>
+            <button 
+              onClick={() => navigate('/alumnos', { state: { mostrarReportes: true } })}
+              className="p-4 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors flex flex-col items-center gap-2"
+            >
+              <FileText className="w-8 h-8" />
+              <span className="text-sm">Ver Reportes</span>
             </button>
             <button 
               onClick={() => navigate('/agenda')}
@@ -221,21 +245,6 @@ export default function Dashboard() {
               <Archive className="w-8 h-8" />
               <span className="text-sm">Asignar Casillero</span>
             </button>
-            {/* NUEVO: Botón de reportes */}
-            <button 
-              onClick={() => navigate('/alumnos', { state: { mostrarReportes: true } })}
-              className="p-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors flex flex-col items-center gap-2"
-            >
-              <FileText className="w-8 h-8" />
-              <span className="text-sm">Ver Reportes</span>
-            </button>
-            <button 
-              onClick={() => navigate('/alumnos')}
-              className="p-4 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors flex flex-col items-center gap-2"
-            >
-              <Users className="w-8 h-8" />
-              <span className="text-sm">Gestionar Alumnos</span>
-            </button>
           </div>
         </div>
 
@@ -245,19 +254,19 @@ export default function Dashboard() {
           <div className="space-y-3">
             <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
               <span className="text-sm font-medium">Evaluaciones Completadas</span>
-              <span className="text-green-600 font-bold">{Math.round(totalAlumnos * 0.85)}</span>
+              <span className="text-green-600 font-bold">{Math.round(totalAlumnos * 0.7)}</span>
             </div>
             <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
               <span className="text-sm font-medium">Pendientes de Evaluación</span>
-              <span className="text-yellow-600 font-bold">{Math.round(totalAlumnos * 0.15)}</span>
+              <span className="text-yellow-600 font-bold">{evaluacionesPendientes}</span>
             </div>
             <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
               <span className="text-sm font-medium">Reportes Generados (Mes)</span>
               <span className="text-blue-600 font-bold">{Math.round(totalAlumnos * 0.6)}</span>
             </div>
             <button
-              onClick={() => navigate('/alumnos', { state: { mostrarEvaluaciones: true } })}
-              className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 font-medium"
+              onClick={() => navigate('/evaluaciones')}
+              className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-lg hover:from-orange-600 hover:to-red-700 transition-all duration-200 font-medium"
             >
               Gestionar Evaluaciones
             </button>

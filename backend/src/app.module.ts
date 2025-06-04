@@ -7,17 +7,19 @@ import { EventosModule } from './eventos/eventos.module';
 import { MensajesModule } from './mensajes/mensajes.module';
 import { AlertasModule } from './alertas/alertas.module';
 import { ReportesModule } from './reportes/reportes.module';
+import { EvaluacionesModule } from './evaluaciones/evaluaciones.module';
 
 @Module({
- imports: [
-   PrismaModule,
-   AlumnosModule,
-   StaffModule,
-   CasillerosModule,
-   EventosModule,
-   MensajesModule,
-   AlertasModule,
-   ReportesModule,
- ],
+  imports: [
+    PrismaModule,
+    AlumnosModule,
+    StaffModule,
+    CasillerosModule,
+    EventosModule,
+    MensajesModule,
+    AlertasModule,
+    ReportesModule,
+    EvaluacionesModule,
+  ],
 })
 export class AppModule {}
