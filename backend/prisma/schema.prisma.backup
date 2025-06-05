@@ -64,10 +64,6 @@ model Alumno {
   evaluacionesActitudinales EvaluacionActitudinal[]
   evaluacionesGlobales      EvaluacionGlobal[]
   configuracionEvaluacion   ConfiguracionEvaluacion?
-
-  // RELACIONES CON PARTIDOS
-  alineacionesPartido       AlineacionPartido[]
-  estadisticasPartidos      EstadisticasIndividuales[]
 }
 
 model Staff {
@@ -574,3 +570,171 @@ model ReportePartido {
   @@map("reportes_partido")
 }
 
+// Agregar estas líneas al modelo Alumno existente:
+// alineacionesPartido AlineacionPartido[]
+// estadisticasPartidos EstadisticasIndividuales[]
+
+// ===== MÓDULO PROFESIONAL DE ANÁLISIS DE PARTIDOS =====
+
+model Partido {
+  id                Int      @id @default(autoincrement())
+  fecha             DateTime
+  categoria         String   
+  rival             String
+  esLocal           Boolean  @default(true)
+  golesPropio       Int      @default(0)
+  golesRival        Int      @default(0)
+  competicion       String   
+  resultado         String   
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relaciones
+  alineaciones              AlineacionPartido[]
+  estadisticasEquipo        EstadisticasEquipo[]
+  estadisticasIndividuales  EstadisticasIndividuales[]
+  eventosPartido            EventoPartido[]
+  reportePartido            ReportePartido?
+  
+  @@map("partidos")
+}
+
+model AlineacionPartido {
+  id                Int      @id @default(autoincrement())
+  partidoId         Int
+  partido           Partido  @relation(fields: [partidoId], references: [id], onDelete: Cascade)
+  alumnoId          Int
+  alumno            Alumno   @relation(fields: [alumnoId], references: [id])
+  
+  posicion          String   
+  esTitular         Boolean  @default(true)
+  minutosJugados    Int      @default(0)
+  esCapitan         Boolean  @default(false)
+  dorsalPartido     Int?
+  
+  createdAt         DateTime @default(now())
+  
+  @@map("alineaciones_partido")
+}
+
+model EstadisticasEquipo {
+  id                Int      @id @default(autoincrement())
+  partidoId         Int
+  partido           Partido  @relation(fields: [partidoId], references: [id], onDelete: Cascade)
+  esEquipoPropio    Boolean  @default(true)
+  
+  posesionPorcentaje Float   @default(50)
+  tirosTotal        Int      @default(0)
+  tirosPuerta       Int      @default(0)
+  pasesCompletados  Int      @default(0)
+  pasesIntentados   Int      @default(0)
+  recuperaciones    Int      @default(0)
+  corners           Int      @default(0)
+  faltasCommetidas  Int      @default(0)
+  faltasRecibidas   Int      @default(0)
+  tarjetasAmarillas Int      @default(0)
+  tarjetasRojas     Int      @default(0)
+  
+  createdAt         DateTime @default(now())
+  
+  @@map("estadisticas_equipo")
+}
+
+model EstadisticasIndividuales {
+  id                Int      @id @default(autoincrement())
+  partidoId         Int
+  partido           Partido  @relation(fields: [partidoId], references: [id], onDelete: Cascade)
+  alumnoId          Int
+  alumno            Alumno   @relation(fields: [alumnoId], references: [id])
+  
+  posicionJugada    String
+  minutosJugados    Int      @default(0)
+  
+  // Métricas ofensivas
+  goles             Int      @default(0)
+  asistencias       Int      @default(0)
+  tiros             Int      @default(0)
+  tirosPuerta       Int      @default(0)
+  
+  // Métricas de pase
+  pasesCompletados  Int      @default(0)
+  pasesIntentados   Int      @default(0)
+  pasesClave        Int      @default(0)
+  
+  // Métricas defensivas
+  recuperaciones    Int      @default(0)
+  intercepciones    Int      @default(0)
+  entradas          Int      @default(0)
+  entradasExitosas  Int      @default(0)
+  despejes          Int      @default(0)
+  
+  // Duelos
+  duelosGanados     Int      @default(0)
+  duelosPerdidos    Int      @default(0)
+  
+  // Regates
+  regates           Int      @default(0)
+  regatesExitosos   Int      @default(0)
+  
+  // Portero específico
+  paradasRealizadas Int      @default(0)
+  golesEncajados    Int      @default(0)
+  
+  // Disciplina
+  faltasCommetidas  Int      @default(0)
+  faltasRecibidas   Int      @default(0)
+  tarjetasAmarillas Int      @default(0)
+  offsides          Int      @default(0)
+  
+  // Calificación del partido
+  calificacion      Float?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("estadisticas_individuales")
+}
+
+model EventoPartido {
+  id                Int      @id @default(autoincrement())
+  partidoId         Int
+  partido           Partido  @relation(fields: [partidoId], references: [id], onDelete: Cascade)
+  
+  minuto            Int
+  tipoEvento        String   
+  jugadorId         Int?
+  esEquipoPropio    Boolean  @default(true)
+  descripcion       String
+  
+  // Coordenadas para mapas de calor
+  coordenadaX       Float?   // 0-100 (% del ancho del campo)
+  coordenadaY       Float?   // 0-100 (% del largo del campo)
+  
+  createdAt         DateTime @default(now())
+  
+  @@map("eventos_partido")
+}
+
+model ReportePartido {
+  id                Int      @id @default(autoincrement())
+  partidoId         Int      @unique
+  partido           Partido  @relation(fields: [partidoId], references: [id], onDelete: Cascade)
+  
+  resumenGeneral    String?
+  puntosPositivos   String?
+  puntosNegativos   String?
+  mejorJugador      Int?
+  
+  // Análisis táctico
+  analisisOfensivo  String?
+  analisisDefensivo String?
+  
+  estaCompleto      Boolean  @default(false)
+  enviadoAPadres    Boolean  @default(false)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("reportes_partido")
+}

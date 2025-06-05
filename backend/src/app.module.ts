@@ -8,7 +8,7 @@ import { MensajesModule } from './mensajes/mensajes.module';
 import { AlertasModule } from './alertas/alertas.module';
 import { ReportesModule } from './reportes/reportes.module';
 import { EvaluacionesModule } from './evaluaciones/evaluaciones.module';
-
+import { PartidosModule } from './partidos/partidos.module';
 @Module({
   imports: [
     PrismaModule,
@@ -19,6 +19,7 @@ import { EvaluacionesModule } from './evaluaciones/evaluaciones.module';
     MensajesModule,
     AlertasModule,
     ReportesModule,
+    PartidosModule,
     EvaluacionesModule,
   ],
 })

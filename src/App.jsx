@@ -1,102 +1,36 @@
-import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
-import {
-  Home, MessageSquare, Users, Calendar, Settings,
-  Archive, UsersRound, Package, TrendingUp, FileText, Bell, AlertTriangle, ClipboardCheck
-} from 'lucide-react';
-
-import Dashboard  from './components/Dashboard';
-import StaffList  from './components/StaffList';
-import DashboardInicio from './pages/DashboardInicio';
-import GeneradorReporte from './components/reportes/GeneradorReporte';
-
-/* --- Pages --- */
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Dashboard from './components/Dashboard';
 import AlumnosPage from './pages/AlumnosPage';
-import AlertasPage from './pages/AlertasPage';
 import EvaluacionesPage from './pages/EvaluacionesPage';
 import FormularioEvaluacion from './pages/FormularioEvaluacion';
-import ConfiguracionEvaluaciones from './pages/ConfiguracionEvaluaciones';
-
-/* --- placeholders --- */
-const Mensajes = () => <div className="p-6 text-2xl">Mensajes (En desarrollo)</div>;
-const Agenda   = () => <div className="p-6 text-2xl">Agenda (En desarrollo)</div>;
-const Casilleros = () => <div className="p-6 text-2xl">Casilleros (En desarrollo)</div>;
-const Equipamiento = () => <div className="p-6 text-2xl">Equipamiento (En desarrollo)</div>;
-const Documentos = () => <div className="p-6 text-2xl">Documentos (En desarrollo)</div>;
-const Notificaciones = () => <div className="p-6 text-2xl">Notificaciones (En desarrollo)</div>;
-const Configuracion  = () => <div className="p-6 text-2xl">Configuración (En desarrollo)</div>;
-
-/* ---------- Item sidebar ---------- */
-function Item({ to, icon:Icon, label }) {
-  const { pathname } = useLocation();
-  const active = (to==='/'? pathname==='/' : pathname.startsWith(to));
+import PartidosPage from './pages/PartidosPage';
+import NuevoPartido from './pages/NuevoPartido';
+import GestionPartido from './pages/GestionPartido';
+import EstadisticasPartido from './pages/EstadisticasPartido';
+import PartidoDetalle from './pages/PartidoDetalle';
+import DashboardPrincipal from './pages/DashboardPrincipal';
+import ReportesAvanzados from './pages/ReportesAvanzados';function App() {
   return (
-    <li className="mb-2">
-      <Link
-        to={to}
-        className={`flex items-center w-full px-4 py-2 rounded-lg transition
-          ${active ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}`}
-      >
-        <Icon size={18} className="mr-3" /> {label}
-      </Link>
-    </li>
-  );
-}
-
-export default function App(){
-  return (
-    <BrowserRouter>
-      <div className="flex min-h-screen font-sans">
-        {/* ─ Sidebar ─ */}
-        <aside className="w-64 bg-gray-900 text-white flex flex-col p-6">
-          <h1 className="text-3xl font-extrabold text-blue-400 mb-8">CALYSM</h1>
-          <nav className="flex-1">
-            <ul>
-              <Item to="/"             icon={Home}         label="Inicio"         />
-              <Item to="/mensajes"     icon={MessageSquare} label="Mensajes"      />
-              <Item to="/alumnos"      icon={Users}        label="Alumnos"        />
-              <Item to="/evaluaciones" icon={ClipboardCheck} label="Evaluaciones" />
-              <Item to="/agenda"       icon={Calendar}     label="Agenda"         />
-              <Item to="/casilleros"   icon={Archive}      label="Casilleros"     />
-              <Item to="/staff"        icon={UsersRound}   label="Staff"          />
-              <Item to="/equipamiento" icon={Package}      label="Equipamiento"   />
-              <Item to="/reportes"     icon={TrendingUp}   label="Reportes"       />
-              <Item to="/documentos"   icon={FileText}     label="Documentos"     />
-              <Item to="/alertas"      icon={AlertTriangle} label="Alertas"       />
-              <Item to="/notificaciones" icon={Bell}       label="Notificaciones" />
-              <Item to="/configuracion" icon={Settings}    label="Configuración"  />
-            </ul>
-          </nav>
-          <p className="text-xs text-gray-500 mt-6">&copy; 2024 CALYSM</p>
-        </aside>
-
-        {/* ─ Contenido ─ */}
-        <main className="flex-1 overflow-y-auto">
-          <header className="bg-white p-6 shadow flex justify-between">
-            <h2 className="text-xl font-semibold">¡A por todas, <strong>Carlos Velasco</strong>!</h2>
-            <span className="text-gray-600">Centro de gestión deportiva</span>
-          </header>
-
+    <Router>
+      <div className="flex h-screen bg-gray-50">
+        <Dashboard />
+        <div className="flex-1 overflow-hidden">
           <Routes>
-            <Route index element={<Dashboard />} />
-            <Route path="/mensajes"     element={<Mensajes />} />
+            <Route path="/" element={<DashboardPrincipal />} />
             <Route path="/alumnos" element={<AlumnosPage />} />
-            <Route path="/alumnos/:id/reporte" element={<GeneradorReporte />} />
             <Route path="/evaluaciones" element={<EvaluacionesPage />} />
-            <Route path="/evaluaciones/jugador/:id" element={<FormularioEvaluacion />} />
-            <Route path="/evaluaciones/configuracion" element={<ConfiguracionEvaluaciones />} />
-            <Route path="/agenda"       element={<Agenda />} />
-            <Route path="/casilleros"   element={<Casilleros />} />
-            <Route path="/staff"        element={<StaffList />} />
-            <Route path="/equipamiento" element={<Equipamiento />} />
-            <Route path="/reportes"     element={<GeneradorReporte />} />
-            <Route path="/documentos"   element={<Documentos />} />
-            <Route path="/alertas"      element={<AlertasPage />} />
-            <Route path="/notificaciones" element={<Notificaciones />} />
-            <Route path="/configuracion"  element={<Configuracion />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
+            <Route path="/evaluaciones/nueva/:alumnoId" element={<FormularioEvaluacion />} />
+            <Route path="/partidos" element={<PartidosPage />} />
+            <Route path="/partidos/nuevo" element={<NuevoPartido />} />
+            <Route path="/partidos/:id/gestion" element={<GestionPartido />} />
+            <Route path="/partidos/:id/estadisticas" element={<EstadisticasPartido />} />
+            <Route path="/partidos/:id" element={<PartidoDetalle />} />
+            <Route path="/reportes" element={<ReportesAvanzados />} />          </Routes>
+        </div>
       </div>
-    </BrowserRouter>
+    </Router>
   );
 }
+
+export default App;

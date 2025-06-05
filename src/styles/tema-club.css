@@ -1,0 +1,21 @@
+/* Tema del Club - Colores Personalizados */
+:root {
+  --color-primario: #DC2626;      /* Rojo */
+  --color-secundario: #1F2937;    /* Gris oscuro */
+  --color-acento: #F59E0B;        /* Dorado */
+  --color-exito: #10B981;         /* Verde */
+}
+
+/* Aplicar colores del club */
+.bg-blue-600, .bg-blue-500 { background-color: var(--color-primario) !important; }
+.bg-blue-700, .bg-blue-800 { background-color: #B91C1C !important; }
+.text-blue-600, .text-blue-500 { color: var(--color-primario) !important; }
+.border-blue-500 { border-color: var(--color-primario) !important; }
+
+/* Botones principales */
+.bg-slate-900 { background-color: var(--color-secundario) !important; }
+.bg-slate-800 { background-color: #111827 !important; }
+
+/* Acentos dorados */
+.text-yellow-600 { color: var(--color-acento) !important; }
+.bg-yellow-600 { background-color: var(--color-acento) !important; }
